@@ -11,6 +11,11 @@ import Panel from 'primevue/panel';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dialog from 'primevue/dialog';
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
+import Checkbox from 'primevue/checkbox';
+import Chips from 'primevue/chips';
+import InputNumber from 'primevue/inputnumber';
 
 import 'primevue/resources/themes/saga-blue/theme.css';
 import 'primevue/resources/primevue.min.css';
@@ -29,6 +34,12 @@ app.component('Panel', Panel);
 app.component('DataTable', DataTable);
 app.component('Column', Column);
 app.component('Dialog', Dialog);
+app.component('Accordion', Accordion);
+app.component('AccordionTab', AccordionTab);
+app.component('Checkbox', Checkbox);
+app.component('Chips', Chips);
+app.component('InputNumber', InputNumber);
 
 app.mount('#app')
+
 

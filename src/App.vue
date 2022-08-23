@@ -2,6 +2,7 @@
   <div id="app">
     <div class="app-container">
       <h1>MQwidgets2 editor</h1>
+      <small>Josep Mulet (c) 2022</small>
     </div>
 
     <Dialog v-model:visible="showLoadDlg">
@@ -23,9 +24,9 @@
         <widget-component :widget="w"></widget-component>
       </div>
       <hr />
-      <Button @click="preview()">Preview</Button>
+      <Button @click="preview()" icon="pi pi-refresh"></Button> Preview
       <p><br></p>
-      <div id="preview_area"></div>
+      <div id="preview_area" v-show="shareCode"></div>
       <p><br></p>
       <div v-if="shareCode">
       <label for="shareCode">Embed code</label>

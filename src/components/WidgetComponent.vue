@@ -134,6 +134,27 @@
       ></TextArea>
     </div>
 
+  <Accordion>
+	<AccordionTab header="Rules">
+    <label for="rules_forbidden">Symbols that are forbidden in the answer</label>
+    <Chips id="rules_forbidden" v-model="widget.def.rules.forbidden" style="width:96%"/>
+    <label for="rules_forbidden">Symbols that are required in the answer</label>
+    <Chips id="rules_forbidden" v-model="widget.def.rules.required" style="width:96%"/>
+    <p></p>
+    <label for="rules_factor">The answer must be factorized</label>
+    <Checkbox id="rules_factor" v-model="widget.def.rules.factor" :binary="true"/>
+    <p></p>
+    <label for="rules_expanded">The answer must be expanded</label>
+    <Checkbox id="rules_expanded" v-model="widget.def.rules.expand" :binary="true"/>
+    <p></p>
+		<label for="rules_precision">Precision</label>
+    <InputNumber id="rules_precision" mode="decimal" locale="es-ES" :minFractionDigits="2" :maxFractionDigits="8" v-model="widget.def.rules.precision"/>
+    <p></p>
+    <label for="rules_expanded">Regard coma as decimal place</label>
+    <Checkbox id="rules_expanded" v-model="widget.def.rules.coma_as_decimal" :binary="true"/>
+	</AccordionTab>
+  </Accordion>
+
     <div v-if="hasPaletesOpt">
       <label for="def_paletes">Editor paletes </label>
       <MultiSelect
