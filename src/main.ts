@@ -4,6 +4,10 @@ import App from './App.vue';
 import PrimeVue from 'primevue/config';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
+import MultiSelect from 'primevue/multiselect';
+import Dropdown from 'primevue/dropdown';
+import TextArea from 'primevue/textarea';
+import Panel from 'primevue/panel';
 
 import 'primevue/resources/themes/saga-blue/theme.css';
 import 'primevue/resources/primevue.min.css';
@@ -14,7 +18,11 @@ const app = createApp(App);
 app.use(PrimeVue);
 
 app.component('InputText', InputText);
+app.component('TextArea', TextArea);
 app.component('Button', Button);
+app.component('MultiSelect', MultiSelect);
+app.component('Dropdown', Dropdown);
+app.component('Panel', Panel);
 
 app.mount('#app')
 

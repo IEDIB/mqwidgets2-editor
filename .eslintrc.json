@@ -1,12 +1,14 @@
 {
+    "parser": "vue-eslint-parser",
     "env": {
         "browser": true,
         "es6": true
     },
     "extends": [
         "eslint:recommended",
-        "plugin:vue/essential",
-        "plugin:@typescript-eslint/eslint-recommended"
+        "plugin:vue/essential", 
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -22,5 +24,7 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"]
     }
 }
