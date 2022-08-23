@@ -6,19 +6,18 @@ export class MQWidget {
     def: MQDefinition
     id: string
 
-    constructor() {
+    constructor(def?: MQDefinition, html?: string) {
         this.id = "mqw_"+Math.random().toString(32).substring(2)
-        this.htmlContent = 'Description here'
-        this.def = {
+        this.htmlContent = html || 'Express the polynomial \\(x^2+x-2\\) into factors'
+        this.def = def || {
             editor: "simple",
-            symbols: ["a:=1", "b:=1"],
-            ans: "a+b",
-            ini: "",
-            rules: {"method": "meqv"},
+            symbols: [{name: "p", value: "x**2+x-2"}],
+            ans: "factor(p)",
+            initial_latex: "(x+ )(x- )",
+            rules: {factor: true},
             palettes: ["all"]
         }
-
-    }
+    } 
 
     share(): string {
         const def64 = packDefinition(this.def)

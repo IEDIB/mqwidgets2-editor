@@ -10,14 +10,23 @@ export interface MQRules {
     precision?: number
 }
 
+export interface MQSymbol {
+    name: string,
+    value: string
+}
+
 export type MQEditors = "basic" | "simple" | "panel" | "cloze" | "mchoice" | "mchoice*"
 export type MQPalletes = "all" | "intervals" | "general" | "funcions" | "geometria" | "symbols"
 
 export interface MQDefinition {
-    "editor": MQEditors,
-    "symbols": string[],
-    "ans": string,
-    "ini": string,
-    "rules": MQRules,
-    "palettes": MQPalletes[]
+    editor: MQEditors,
+    symbols: MQSymbol[],
+    ans?: string,
+    anse?: string,
+    initial_latex?: string,
+    formulation?: string,
+    rules: MQRules,
+    palettes: MQPalletes[],
+    right_answer?: string,
+    ansType?: string
 }

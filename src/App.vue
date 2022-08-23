@@ -3,14 +3,34 @@
     <div class="app-container">
       <h1>MQwidgets2 editor</h1>
     </div>
-      <div v-for="w in mqgroup.widgets" v-bind:key="w.id">
+
+    <Dialog v-model:visible="showLoadDlg">
+      <template #header>
+      <h4>Load content into the editor</h4>
+      </template>
+      <label for="theLoadCode">Paste the HTML code</label> 
+      <TextArea id="theLoadCode" v-model="contentsToLoad" style="width:99%" rows="5"></TextArea>
+
+      <template #footer>
+        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="onCancelLoad()"/>
+        <Button label="Accept" icon="pi pi-check" autofocus @click="onLoad()"/>
+      </template>
+    </Dialog>
+
+    <Button @click="onShowLoadDlg()">Load</Button>
+
+    <div v-for="w in mqgroup.widgets" v-bind:key="w.id">
         <widget-component :widget="w"></widget-component>
       </div>
       <hr />
       <Button @click="preview()">Preview</Button>
       <p><br></p>
       <div id="preview_area"></div>
-    
+      <p><br></p>
+      <div v-if="shareCode">
+      <label for="shareCode">Embed code</label>
+      <TextArea id="shareCode" v-model="shareCode" :autoResize="true" rows="5" cols="30"  style="width:95%"></TextArea>
+      </div>
   </div>
 </template>
 
@@ -37,6 +57,9 @@ declare global {
 })
 export default class App extends Vue {
   mqgroup: MQGroup = new MQGroup();
+  shareCode = ""
+  showLoadDlg = false;
+  contentsToLoad = "";
 
   mounted() {
     let libStyle = document.createElement("link");
@@ -74,6 +97,13 @@ export default class App extends Vue {
     libScript = document.createElement("script");
     libScript.setAttribute(
       "src",
+      "https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+    );
+    document.head.appendChild(libScript);
+
+    libScript = document.createElement("script");
+    libScript.setAttribute(
+      "src",
       "https://piworld.es/iedib/matheditor/mqwidgets2.js"
     );
     document.head.appendChild(libScript);
@@ -81,13 +111,15 @@ export default class App extends Vue {
 
   created() {
     console.log("App created");
+    this.mqgroup.addWidget()
   }
  
   preview() {
     const previewArea = document.getElementById(
       "preview_area"
     ) as HTMLDivElement;
-    previewArea.innerHTML = this.mqgroup.share();
+    this.shareCode = this.mqgroup.share();
+    previewArea.innerHTML = this.shareCode;
     //reflow latex
     if(window.MathJax) {
         window.MathJax.typesetPromise && window.MathJax.typesetPromise();
@@ -99,6 +131,27 @@ export default class App extends Vue {
       
       window.MQWidgets.reflow();
     }, 500);
+  }
+
+  onShowLoadDlg(): void {
+    this.contentsToLoad = ""
+    this.showLoadDlg = true
+  }
+
+  onCancelLoad(): void {
+    this.showLoadDlg = false
+  }
+
+  onLoad(): void {
+    this.showLoadDlg = false
+    if(this.contentsToLoad) { 
+      try {
+        this.mqgroup = MQGroup.parse(this.contentsToLoad)
+        this.shareCode = ""
+      } catch(ex) {
+        console.error(ex)
+      }
+    }
   }
 }
 </script>
