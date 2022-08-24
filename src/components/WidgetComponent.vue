@@ -219,6 +219,7 @@ export default class WidgetComponent extends Vue {
     const paletesOptions = [
       { label: "All", value: "all" },
       { label: "General", value: "general" },
+      { label: "Symbols", value: "symbols" },
       { label: "Intervals", value: "intervals" },
       { label: "Geometry", value: "geometria" },
       { label: "Functions", value: "funcions" },
