@@ -89,6 +89,10 @@ export function unpackDefinition(def64: string): MQDefinition {
             return {name: parts[0], value: parts[1]}
         })
     }
+    if(def.right_answer) {
+        //decode rightanwer
+        def.right_answer = atob(def.right_answer)
+    }
     return def
 } 
 
@@ -116,7 +120,11 @@ export function packDefinition(def: MQDefinition): string {
     }
     if(!tmp.right_answer) {
         delete tmp.right_answer
+    } else {
+        //encode rightanswer
+        tmp.right_answer = btoa(tmp.right_answer)
     }
+
     
     return btoa(JSON.stringify(tmp)); 
 }
