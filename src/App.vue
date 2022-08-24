@@ -55,6 +55,38 @@ declare global {
   }
 }
 
+function importLink(href: string): void {
+  const libStyle = document.createElement("link");
+  libStyle.href = href;
+  libStyle.rel = "stylesheet";
+  document.head.appendChild(libStyle);
+}
+
+function importScript(src: string, async?: boolean, id?: string): Promise<void> {
+
+    const libScript = document.createElement("script");
+    libScript.setAttribute("src", src); 
+    libScript.setAttribute("type", "text/javascript");    
+    if(id) {
+        libScript.setAttribute("id", id); 
+    }
+    if(async) {
+      libScript.setAttribute("async", "")
+    }
+    return new Promise((resolve, reject) => {
+        libScript.onload = function() {
+          resolve();
+        };
+        libScript.onabort = function() {
+          reject();
+        }
+        libScript.onerror = function() {
+          reject();
+        }
+        document.head.prepend(libScript);
+    });
+}
+
 @Options({
   components: {
     WidgetComponent,
@@ -67,52 +99,16 @@ export default class App extends Vue {
   contentsToLoad = "";
 
   mounted() {
-    let libStyle = document.createElement("link");
-    libStyle.href =
-      "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css";
-    libStyle.rel = "stylesheet";
-    document.head.appendChild(libStyle);
+    importLink("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"); 
+    importLink("https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css");
+      
+    importScript("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js", true, "MathJax-script");
+    importScript("https://code.jquery.com/jquery-3.6.0.min.js").then( () => {
+        //JQuery is loaded
+        importScript("https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js");
+        importScript("https://iedib.github.io/mqwidgets2/dist/mqwidgets2.js")
+    });
 
-    libStyle = document.createElement("link");
-    libStyle.href =
-      "https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css";
-    libStyle.rel = "stylesheet";
-    document.head.appendChild(libStyle);
-
-    let libScript = document.createElement("script");
-    libScript.setAttribute(
-      "src",
-      "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    ); 
-    libScript.setAttribute(
-      "id",
-      "MathJax-script"
-    ); 
-    libScript.setAttribute("type", "text/javascript"); 
-    libScript.setAttribute("async", "")
-    document.head.prepend(libScript);
-
-    libScript = document.createElement("script");
-    libScript.setAttribute(
-      "src",
-      "https://code.jquery.com/jquery-3.6.0.min.js"
-    );
-    document.head.prepend(libScript);
-
-    //TODO: Requires jquery to be fully loaded
-    libScript = document.createElement("script");
-    libScript.setAttribute(
-      "src",
-      "https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
-    );
-    document.head.prepend(libScript);
-
-    libScript = document.createElement("script");
-    libScript.setAttribute(
-      "src",
-      "https://piworld.es/iedib/matheditor/mqwidgets2.js"
-    );
-    document.head.prepend(libScript);
   }
 
   created() {
