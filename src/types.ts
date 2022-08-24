@@ -30,3 +30,5 @@ export interface MQDefinition {
     right_answer?: string,
     ansType?: string
 }
+
+export type MQGroupContext = {'lang'?: string}

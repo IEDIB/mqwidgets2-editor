@@ -29,7 +29,7 @@
     ></Dropdown>
 
     <div v-if="hasInitialOpt">
-      <label for="def_ini">Initial content (LaTeX) </label>
+      <label for="def_ini">Initial content (LaTeX) <i v-if="widget.def.editor=='cloze'">Use ? as placeholder</i></label>
       <InputText
         id="def_ini"
         type="text"
@@ -125,7 +125,7 @@
         </Column>
       </DataTable>
 
-      <label for="def_rightchoice">Right answer (Sympy) </label>
+      <label for="def_rightchoice">Right answer (Sympy)<sup>*</sup> </label>
       <TextArea
         id="def_rightchoice"
         style="width: 95%"
@@ -133,6 +133,15 @@
         v-model="widget.def.ans"
       ></TextArea>
     </div>
+
+    <label for="def_feedback">Explanation right answer (HTML) </label>
+      <TextArea
+        id="def_feedback"
+        style="width: 95%"
+        :autoResize="true"
+        v-model="widget.def.right_answer"
+      ></TextArea>
+
 
   <Accordion>
 	<AccordionTab header="Rules">
@@ -194,7 +203,7 @@ export default class WidgetComponent extends Vue {
       paletes.splice(0, paletes.length);
     }
     this.hasInitialOpt =
-      ["basic", "simple", "panel"].indexOf(this.widget.def.editor) >= 0;
+      ["basic", "simple", "panel", "cloze"].indexOf(this.widget.def.editor) >= 0;
   }
 
   data() {
@@ -235,7 +244,7 @@ export default class WidgetComponent extends Vue {
     }
 
     this.hasInitialOpt =
-      ["basic", "simple", "panel"].indexOf(this.widget.def.editor) >= 0;
+      ["basic", "simple", "panel", "cloze"].indexOf(this.widget.def.editor) >= 0;
   }
 
   onCellEditComplete(event: any): void {

@@ -1,6 +1,6 @@
 import { MQWidget } from "./MQwidget"
 import { MQDefinition } from "./types";
-import { unpackDefinition } from "./utils";
+import { parseContext, parseDefinition, unpackDefinition } from "./utils";
 
 export class MQGroup {
     static parse(html: string) { 
@@ -9,12 +9,31 @@ export class MQGroup {
         hiddenDiv.style.display = 'none'
         hiddenDiv.innerHTML = html
 
-        const allDataMq = hiddenDiv.querySelectorAll("[data-mq]")
-
+        //First parse the context (ONLY one pw-mq-group is supported now, TODO)
+        let allDataMq = null
         const newGroup = new MQGroup()
-        allDataMq.forEach( (mq) => {
-            const dataMq = mq.getAttribute('data-mq')
-            if(dataMq) {
+        const allGroupDivs = hiddenDiv.querySelectorAll("div.pw-mq-group")
+        if(allGroupDivs.length >= 1) {
+            if(allGroupDivs.length > 1) {
+                console.error("Only one pw-mq-group is supported. All the remaining are discarded")
+            }
+            const theGroup = allGroupDivs[0]
+            // Parse the context from theGroupElement
+            newGroup.context = parseContext(theGroup)
+            allDataMq = theGroup.querySelectorAll("[data-mq]")
+
+        } else if(allGroupDivs.length == 0) {
+            console.error("No pw-mq-group found. Creating a blank one!")
+            allDataMq = hiddenDiv.querySelectorAll("[data-mq]")
+        }
+        
+        allDataMq?.forEach( (mq) => {
+            const dataMq = mq.getAttribute('data-mq') || ''
+            if (['basic', 'simple', 'panel', 'cloze', 'mchoice', 'mchoice*'].indexOf(dataMq)>=0) {
+                // This is the old syntax based on atributes
+                const def = parseDefinition(mq)
+                newGroup.addWidget(def, mq.innerHTML)
+            } else if(dataMq) {
                 const def = unpackDefinition(dataMq)
                 newGroup.addWidget(def, mq.innerHTML)
             }
@@ -24,11 +43,12 @@ export class MQGroup {
     }
 
 
+    context: any
     widgets: MQWidget[]
 
     constructor() {
-        this.widgets = [
-        ] 
+        this.widgets = [] 
+        this.context = {}
     }
 
     addWidget(def?: MQDefinition, html?: string): void {
@@ -36,13 +56,21 @@ export class MQGroup {
         this.widgets.push(w)
     }
 
+    private serializeContext() {
+        let serial = Object.keys(this.context).map((k: string) => 'data-'+k+'="'+this.context[k]+'"').join(" ")
+        if(serial) {
+            serial = " " + serial 
+        }
+        return serial
+    }
 
     share(): string {
-        const widgetsSerial = this.widgets.map( (w)=> w.share() )
-        return `<div class="pw-mq-group">
+        const widgetsSerial = this.widgets.map( (w)=> w.share() ).join('\n')
+        return `<div class="pw-mq-group"${this.serializeContext()}>
         ${widgetsSerial}
         </div>`
     }
 
 
-}
+} 
+

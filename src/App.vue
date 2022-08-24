@@ -29,8 +29,12 @@
       <div id="preview_area" v-show="shareCode"></div>
       <p><br></p>
       <div v-if="shareCode">
-      <label for="shareCode">Embed code</label>
+      <label for="shareCode">Code to embed</label>
       <TextArea id="shareCode" v-model="shareCode" :autoResize="true" rows="5" cols="30"  style="width:95%"></TextArea>
+      <pre><code>
+Add at the bottom of the page
+&lt;script src="https://iedib.github.io/mqwidgets2/dist/mqwidgets2.js"&gt;&lt;/script&gt;
+      </code></pre>
       </div>
   </div>
 </template>
@@ -86,33 +90,43 @@ export default class App extends Vue {
     ); 
     libScript.setAttribute("type", "text/javascript"); 
     libScript.setAttribute("async", "")
-    document.head.appendChild(libScript);
+    document.head.prepend(libScript);
 
     libScript = document.createElement("script");
     libScript.setAttribute(
       "src",
       "https://code.jquery.com/jquery-3.6.0.min.js"
     );
-    document.head.appendChild(libScript);
+    document.head.prepend(libScript);
 
+    //TODO: Requires jquery to be fully loaded
     libScript = document.createElement("script");
     libScript.setAttribute(
       "src",
       "https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
     );
-    document.head.appendChild(libScript);
+    document.head.prepend(libScript);
 
     libScript = document.createElement("script");
     libScript.setAttribute(
       "src",
       "https://piworld.es/iedib/matheditor/mqwidgets2.js"
     );
-    document.head.appendChild(libScript);
+    document.head.prepend(libScript);
   }
 
   created() {
     console.log("App created");
-    this.mqgroup.addWidget()
+    // check if ?doc is passed as url query
+    const queryString = window.location.search
+    const urlParams = new URLSearchParams(queryString); 
+    if(urlParams.get('doc')) { 
+      this.contentsToLoad = atob(urlParams.get('doc') || '')
+      console.log(this.contentsToLoad)
+      this.onLoad()
+    } else {
+      this.mqgroup.addWidget()
+    }
   }
  
   preview() {
@@ -129,7 +143,6 @@ export default class App extends Vue {
 
     //wait for DOM ready
     setTimeout(function() {
-      
       window.MQWidgets.reflow();
     }, 500);
   }
