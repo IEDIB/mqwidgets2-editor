@@ -107,7 +107,10 @@ export default class App extends Vue {
         //JQuery is loaded
         importScript("https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js");
         importScript("https://iedib.github.io/mqwidgets2/dist/mqwidgets2.js").then( () => {
-          window.MQWidgets.init({lang: 'en'});
+          window.MQWidgets.init({
+            lang: 'en',
+            engine: 'https://piworld.es/mwqdemo/api/'
+            });
         })
     });
 
