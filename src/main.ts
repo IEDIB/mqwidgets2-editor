@@ -16,6 +16,7 @@ import AccordionTab from 'primevue/accordiontab';
 import Checkbox from 'primevue/checkbox';
 import Chips from 'primevue/chips';
 import InputNumber from 'primevue/inputnumber';
+import ToggleButton from 'primevue/togglebutton';
 
 import 'primevue/resources/themes/saga-blue/theme.css';
 import 'primevue/resources/primevue.min.css';
@@ -39,6 +40,7 @@ app.component('AccordionTab', AccordionTab);
 app.component('Checkbox', Checkbox);
 app.component('Chips', Chips);
 app.component('InputNumber', InputNumber);
+app.component('ToggleButton', ToggleButton);
 
 app.mount('#app')
 

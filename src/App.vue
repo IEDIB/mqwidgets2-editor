@@ -25,16 +25,16 @@
       </div>
       <hr />
       <Button @click="preview()" icon="pi pi-refresh"></Button> Preview
+      <ToggleButton v-model="asDataAttr" onLabel="Output as data-attr" offLabel="Output as init"></ToggleButton>
       <p><br></p>
       <div id="preview_area" v-show="shareCode"></div>
       <p><br></p>
       <div v-if="shareCode">
       <label for="shareCode">Code to embed</label>
       <TextArea id="shareCode" v-model="shareCode" :autoResize="true" rows="5" cols="30"  style="width:95%"></TextArea>
-      <pre><code>
-Add at the bottom of the page
-&lt;script src="https://iedib.github.io/mqwidgets2/dist/mqwidgets2.js"&gt;&lt;/script&gt;
-      </code></pre>
+      
+       <label for="shareCode">Add to the bottom of the page</label>
+      <TextArea id="shareCode" v-model="dependenciesCode" :autoResize="true" rows="5" cols="30"  style="width:95%"></TextArea>
       </div>
   </div>
 </template>
@@ -97,6 +97,8 @@ export default class App extends Vue {
   shareCode = ""
   showLoadDlg = false;
   contentsToLoad = "";
+  dependenciesCode = "";
+  asDataAttr = true
 
   mounted() {
     importLink("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"); 
@@ -109,8 +111,8 @@ export default class App extends Vue {
         importScript("https://iedib.github.io/mqwidgets2/dist/mqwidgets2.js").then( () => {
           window.MQWidgets.init({
             lang: 'en',
-            engine: 'https://piworld.es/mwqdemo/api/'
-            });
+            engine: 'https://piworld.es/mqwdemo/api/'
+          });
         })
     });
 
@@ -134,7 +136,27 @@ export default class App extends Vue {
     const previewArea = document.getElementById(
       "preview_area"
     ) as HTMLDivElement;
-    this.shareCode = this.mqgroup.share();
+
+ 
+    const shared = this.mqgroup.share(this.asDataAttr);
+    this.shareCode = shared[0]  
+    const parsedWidgets: any = shared[1]
+
+    const widgetsScript = JSON.stringify(parsedWidgets, null, 2);
+    const ss0 = '<'+'script'
+    const ss = '<'+'script>'
+    const cs = '</'+'script>'
+    this.dependenciesCode = `
+    ${ss0} src="https://iedib.github.io/mqwidgets2/dist/mqwidgets2.js">${cs}
+    ${ss}
+    MQWidgets.init({
+      lang: 'en',
+      engine: 'https://piworld.es/mqwdemo/api/', // Only for DEMO, replace with your backend CAS
+      widgets: ${widgetsScript}
+    });
+    ${cs}`;
+
+   
     previewArea.innerHTML = this.shareCode;
     //reflow latex
     if(window.MathJax) {
@@ -144,7 +166,7 @@ export default class App extends Vue {
 
     //wait for DOM ready
     setTimeout(function() {
-      window.MQWidgets.reflow();
+      window.MQWidgets.reflow(parsedWidgets);
     }, 500);
   }
 

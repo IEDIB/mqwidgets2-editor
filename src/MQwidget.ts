@@ -5,6 +5,7 @@ export class MQWidget {
     htmlContent: string
     def: MQDefinition
     id: string
+    tagName = 'p'
 
     constructor(def?: MQDefinition, html?: string) {
         this.id = "mqw_"+Math.random().toString(32).substring(2)
@@ -19,8 +20,11 @@ export class MQWidget {
         }
     } 
 
-    share(): string {
+    share(isInline: boolean): string[] {
         const def64 = packDefinition(this.def)
-        return `<p data-mq="${def64}">${this.htmlContent}</p>`
+        if(isInline) {
+            return [`<${this.tagName} data-mq="${def64}">${this.htmlContent}</${this.tagName}>`, this.id, def64]
+        }
+        return [`<${this.tagName} id="${this.id}">${this.htmlContent}</${this.tagName}>`, this.id, def64]
     }
 }

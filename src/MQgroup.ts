@@ -64,11 +64,26 @@ export class MQGroup {
         return serial
     }
 
-    share(): string {
-        const widgetsSerial = this.widgets.map( (w)=> w.share() ).join('\n')
-        return `<div class="pw-mq-group"${this.serializeContext()}>
+    share(isInline: boolean): any[] {
+
+        const widgetsInGroup: {[name: string]: string} = {}
+
+        if(isInline) {
+            const widgetsSerial = this.widgets.map( (w)=> w.share(isInline)[0] ).join('\n')
+            return [`<div class="pw-mq-group"${this.serializeContext()}>
+            ${widgetsSerial}
+            </div>`, widgetsInGroup]
+        } 
+        const widgetsSerial = this.widgets.map( (w)=> {
+            const [txt, id, b64] = w.share(isInline)
+            widgetsInGroup[id] = b64
+            return txt
+        }).join('\n')
+        return [`<div class="pw-mq-group"${this.serializeContext()}>
         ${widgetsSerial}
-        </div>`
+        </div>`, widgetsInGroup]
+
+
     }
 
 
