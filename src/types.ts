@@ -7,7 +7,8 @@ export interface MQRules {
     factor?: boolean, 
     expand?: boolean, 
     coma_as_decimal?: boolean,
-    precision?: number
+    precision?: number,
+    num_terms?: number | null
 }
 
 export interface MQSymbol {
@@ -19,6 +20,7 @@ export type MQEditors = "basic" | "simple" | "panel" | "cloze" | "mchoice" | "mc
 export type MQPalletes = "all" | "intervals" | "general" | "funcions" | "geometria" | "symbols"
 
 export interface MQDefinition {
+    engine?: string,
     editor: MQEditors,
     symbols: MQSymbol[],
     ans?: string,

@@ -6,13 +6,15 @@ export class MQWidget {
     def: MQDefinition
     id: string
     tagName = 'p'
+    tombstone = false
 
     constructor(def?: MQDefinition, html?: string) {
         this.id = "mqw_"+Math.random().toString(32).substring(2)
         this.htmlContent = html || 'Express the polynomial \\(x^2+x-2\\) into factors'
         this.def = def || {
+            engine: "sympy",
             editor: "simple",
-            symbols: [{name: "p", value: "x**2+x-2"}],
+            symbols: [{name: "p", value: "x*x+x-2"}],
             ans: "factor(p)",
             initial_latex: "(x+ )(x- )",
             rules: {factor: true},

@@ -64,15 +64,24 @@ export class MQGroup {
         return serial
     }
 
-    share(isInline: boolean): any[] {
+    private purge() {
+        //Remove widgets with tombstone
+        for(let i=this.widgets.length-1; i>=0; i--) {
+            if(this.widgets[i].tombstone) {
+                this.widgets.splice(i, 1)
+            }
+        }
+    }
 
+    share(isInline: boolean): any[] {
+        this.purge()
         const widgetsInGroup: {[name: string]: string} = {}
 
         if(isInline) {
             const widgetsSerial = this.widgets.map( (w)=> w.share(isInline)[0] ).join('\n')
             return [`<div class="pw-mq-group"${this.serializeContext()}>
             ${widgetsSerial}
-            </div>`, widgetsInGroup]
+</div>`, widgetsInGroup]
         } 
         const widgetsSerial = this.widgets.map( (w)=> {
             const [txt, id, b64] = w.share(isInline)

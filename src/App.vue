@@ -19,12 +19,14 @@
     </Dialog>
 
     <Button @click="onShowLoadDlg()">Load</Button>
-
+    <Button @click="addWidget()" title="Add widget" class="p-button-rounded p-button-success p-button-sm" icon="pi pi-plus"></Button>
     <div v-for="w in mqgroup.widgets" v-bind:key="w.id">
-        <widget-component :widget="w"></widget-component>
-      </div>
-      <hr />
-      <Button @click="preview()" icon="pi pi-refresh"></Button> Preview
+        <widget-component :widget="w" v-if="!w.tombstone"></widget-component>
+    </div>
+    
+    <hr />
+    
+    <Button @click="preview()" icon="pi pi-refresh"></Button> Preview
       <ToggleButton v-model="asDataAttr" onLabel="Output as data-attr" offLabel="Output as init"></ToggleButton>
       <p><br></p>
       <div id="preview_area" v-show="shareCode"></div>
@@ -111,7 +113,7 @@ export default class App extends Vue {
         importScript("https://iedib.github.io/mqwidgets2/dist/mqwidgets2.js").then( () => {
           window.MQWidgets.init({
             lang: 'en',
-            engine: 'https://piworld.es/mqwdemo/api/'
+            engines: ['https://piworld.es/mqwdemo/api/', 'nerdamer'] //Load all engines
           });
         })
     });
@@ -137,7 +139,7 @@ export default class App extends Vue {
       "preview_area"
     ) as HTMLDivElement;
 
- 
+    
     const shared = this.mqgroup.share(this.asDataAttr);
     this.shareCode = shared[0]  
     const parsedWidgets: any = shared[1]
@@ -151,7 +153,7 @@ export default class App extends Vue {
     ${ss}
     MQWidgets.init({
       lang: 'en',
-      engine: 'https://piworld.es/mqwdemo/api/', // Only for DEMO, replace with your backend CAS
+      engines: ['https://piworld.es/mqwdemo/api/', 'nerdamer'], // Only for DEMO, replace with your backend CAS
       widgets: ${widgetsScript}
     });
     ${cs}`;
@@ -190,6 +192,10 @@ export default class App extends Vue {
       }
     }
   }
+  
+  addWidget(): void {
+    this.mqgroup.addWidget()
+  }  
 }
 </script>
 

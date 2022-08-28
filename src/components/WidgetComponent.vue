@@ -1,6 +1,26 @@
 <template>
   <Panel :toggleable="true" class="mq-widget-component">
-    <template #header> Widget {{ widget.id }} </template>
+    <template #header> 
+      <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="widget.tombstone=true" /> Widget {{ widget.id }} 
+    </template>
+    <label for="def_editor">Widget type<sup>*</sup> </label>
+    <Dropdown
+      id="def_editor"
+      v-model="widget.def.editor"
+      :options="editorOptions"
+      optionLabel="label"
+      optionValue="value"
+      @change="editorChange()"
+    ></Dropdown> &nbsp;&nbsp;&nbsp;
+    <label for="def_engine">CAS engine</label>
+    <Dropdown
+      id="def_engine"
+      v-model="widget.def.engine"
+      :options="engineOptions"
+      optionLabel="label"
+      optionValue="value"
+    ></Dropdown>
+    <p></p>
     <label for="def_desc">Question description (HTML)</label><br />
     <TextArea
       id="def_dec"
@@ -18,15 +38,7 @@
     ></InputText>
 
     <hr />
-    <label for="def_editor">Widget type<sup>*</sup> </label>
-    <Dropdown
-      id="def_editor"
-      v-model="widget.def.editor"
-      :options="editorOptions"
-      optionLabel="label"
-      optionValue="value"
-      @change="editorChange()"
-    ></Dropdown>
+    
 
     <div v-if="hasInitialOpt">
       <label for="def_ini">Initial content (LaTeX) <i v-if="widget.def.editor=='cloze'">Use ? as placeholder</i></label>
@@ -98,6 +110,7 @@
           key="name"
           style="width: 20%"
         > 
+     
           <template #body="slotProps">
           {{slotProps.data.name}}
           </template>
@@ -106,11 +119,13 @@
           </template>
         </Column>
         <Column 
-          field="value"
-          header="Value"
+          field="value" 
           key="value"
           style="width: 60%"
         > 
+        <template #header>
+            Value ({{widget.def.engine}})
+        </template>
         <template #body="slotProps">
           {{slotProps.data.value}}
           </template>
@@ -125,7 +140,7 @@
         </Column>
       </DataTable>
 
-      <label for="def_rightchoice">Right answer (Sympy)<sup>*</sup> </label>
+      <label for="def_rightchoice">Right answer ({{widget.def.engine}})<sup>*</sup> </label>
       <TextArea
         id="def_rightchoice"
         style="width: 95%"
@@ -134,7 +149,7 @@
       ></TextArea>
     </div>
 
-    <label for="def_feedback">Explanation right answer (HTML) </label>
+    <label for="def_feedback">Explanation for the right answer (HTML) </label>
       <TextArea
         id="def_feedback"
         style="width: 95%"
@@ -145,11 +160,13 @@
 
   <Accordion>
 	<AccordionTab header="Rules">
-    <label for="rules_forbidden">Symbols that are forbidden in the answer</label>
+    <label for="rules_forbidden">Symbols that are forbidden in the answer [Enter]</label>
     <Chips id="rules_forbidden" v-model="widget.def.rules.forbidden" style="width:96%"/>
-    <label for="rules_forbidden">Symbols that are required in the answer</label>
+    <label for="rules_forbidden">Symbols that are required in the answer [Enter]</label>
     <Chips id="rules_forbidden" v-model="widget.def.rules.required" style="width:96%"/>
     <p></p>
+    <label for="rules_nterms">Number of terms (polynomial)</label>
+    <InputNumber id="rules_nterms" mode="decimal" :min="0" v-model="widget.def.rules.num_terms" showButtons @input="onChangeNterms()"/>
     <label for="rules_factor">The answer must be factorized</label>
     <Checkbox id="rules_factor" v-model="widget.def.rules.factor" :binary="true"/>
     <p></p>
@@ -188,6 +205,7 @@ import { Options, Vue } from "vue-class-component";
 })
 export default class WidgetComponent extends Vue {
   widget!: MQWidget;
+  engineOptions?: any[];
   editorOptions?: any[];
   paletesOptions?: any[];
   hasPaletesOpt = true;
@@ -207,6 +225,10 @@ export default class WidgetComponent extends Vue {
   }
 
   data() {
+    const engineOptions = [
+      { label: "Sympy", value: "sympy" },
+      { label: "Nerdamer", value: "nerdamer" }
+    ];
     const editorOptions = [
       { label: "Basic", value: "basic" },
       { label: "Simple", value: "simple" },
@@ -226,6 +248,7 @@ export default class WidgetComponent extends Vue {
     ];
 
     return {
+      engineOptions,
       editorOptions,
       paletesOptions,
     };
@@ -262,6 +285,12 @@ export default class WidgetComponent extends Vue {
         if (newValue.trim().length > 0) data[field] = newValue;
         else event.preventDefault();
         break;
+    }
+  }
+
+  onChangeNterms(): void {
+    if(this.widget.def.rules.num_terms!=null && this.widget.def.rules.num_terms < 1) {
+      this.widget.def.rules.num_terms = null
     }
   }
 
