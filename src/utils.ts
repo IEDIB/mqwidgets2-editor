@@ -1,5 +1,27 @@
 import { MQDefinition, MQEditors, MQGroupContext, MQPalletes, MQSymbol } from "./types";
 
+const keysDef = ["editor",
+                "engine",
+                "formulation",
+                "initial_latex",
+                "ansType",
+                "ans",
+                "anse",
+                "right_answer",
+                "symbols",
+                "rules",
+                "palettes"];
+const keysDefDefault = ["simple",
+                "sympy",
+                "",
+                "",
+                "",
+                "",
+                "",
+                [],
+                {},
+                []];
+
 // Legacy support
 export function parseDefinition(el: Element): MQDefinition {
     const editorType = (el.getAttribute("data-mq") || 'simple') as MQEditors;
@@ -74,11 +96,34 @@ export function parseDefinition(el: Element): MQDefinition {
     return obj
 }
 
+export function zip(l1: any[], l2: any[]): any[] {
+    const n = Math.min(l1.length, l2.length)
+    const l: any[] = []
+    for(let i=0; i<n; i++) {
+        l.push([l1[i], l2[i]])
+    }
+    return l
+} 
 
 export function unpackDefinition(def64: string): MQDefinition {
     const contents = atob(def64);
     // must adjust the symbols key
-    const def: any = JSON.parse(contents);
+    let def: any = {}
+    const parsedDef: any = JSON.parse(contents);
+    // Support loaded as array
+    // if json_obj is an array, then we should parse it to an object
+    if(Array.isArray(parsedDef)) {
+        if(parsedDef.length < keysDef.length) {
+            console.error("The definition does not contain all the fields. Is it corrupted?")
+        }
+        zip(keysDef, parsedDef).forEach( (pair) => {
+            const [key, value] = pair
+            def[key] = value
+        })
+    } else {
+        def = parsedDef
+    }
+
     if(['mchoice', 'mchoice*'].indexOf(def.editor)>=0) {
         def.symbols = (def.symbols || []).map((s: string)=> {
             return {name: s, value: ''}
@@ -96,9 +141,9 @@ export function unpackDefinition(def64: string): MQDefinition {
     return def
 } 
 
-export function packDefinition(def: MQDefinition): string {
+export function packDefinition(def: MQDefinition, as_object?: boolean): string {
     // must adjust the symbols key
-    const tmp: any = JSON.parse(JSON.stringify(def))
+    let tmp: any = JSON.parse(JSON.stringify(def))
     delete tmp["symbols"]
     if(['mchoice', 'mchoice*'].indexOf(def.editor)>=0) {
         tmp.symbols = def.symbols.map((s)=> s.name)
@@ -123,6 +168,19 @@ export function packDefinition(def: MQDefinition): string {
     } else {
         //encode rightanswer
         tmp.right_answer = btoa(tmp.right_answer)
+    }
+
+    if(!as_object) {
+        //Save it as an ordered array
+        const vec: any = []
+        keysDef.forEach( (key, i) => {
+            let value = tmp[key]
+            if(value == null) {
+                value = keysDefDefault[i]
+            }
+            vec.push(value)
+        })
+        tmp = vec
     }
 
     
