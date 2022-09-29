@@ -1,6 +1,7 @@
 import { MQDefinition, MQEditors, MQGroupContext, MQPalletes, MQSymbol } from "./types";
 
-const keysDef = ["editor",
+const keysDef = [
+                "editor",
                 "engine",
                 "formulation",
                 "initial_latex",
@@ -11,10 +12,12 @@ const keysDef = ["editor",
                 "symbols",
                 "rules",
                 "palettes"];
-const keysDefDefault = ["simple",
+const keysDefDefault = [
+                "simple",
                 "sympy",
                 "",
                 "",
+                "ans",
                 "",
                 "",
                 "",
