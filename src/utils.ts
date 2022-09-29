@@ -145,6 +145,9 @@ export function packDefinition(def: MQDefinition, as_object?: boolean): string {
     // must adjust the symbols key
     let tmp: any = JSON.parse(JSON.stringify(def))
     tmp['ansType']="ans"
+    if(tmp['anse']=='') {
+        delete tmp['anse'];
+    }
     delete tmp["symbols"]
     if(['mchoice', 'mchoice*'].indexOf(def.editor)>=0) {
         tmp.symbols = def.symbols.map((s)=> s.name)
